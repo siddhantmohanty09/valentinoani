@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For Anindita 💖</title>
+<style>
+  body {
+    margin: 0;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+    text-align: center;
+  }
+
+  h1 {
+    color: #b3003b;
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    animation: pop 1s ease;
+  }
+
+  p {
+    color: #80002a;
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+  }
+
+  #yesBtn {
+    font-size: 1.4rem;
+    padding: 14px 32px;
+    border: none;
+    border-radius: 12px;
+    background: #ff4d6d;
+    color: white;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    z-index: 10;
+  }
+
+  #yesBtn:hover {
+    transform: scale(1.08);
+  }
+
+  #noBtn {
+    font-size: 1.2rem;
+    padding: 12px 26px;
+    border: none;
+    border-radius: 12px;
+    background: #b3003b;
+    color: white;
+    position: fixed;
+    top: 20%;
+    left: 60%;
+    pointer-events: none; /* Makes it unclickable */
+  }
+
+  /* Floating hearts */
+  .heart {
+    position: fixed;
+    bottom: -20px;
+    font-size: 20px;
+    animation: floatUp 6s linear infinite;
+    opacity: 0.8;
+    pointer-events: none;
+  }
+
+  @keyframes floatUp {
+    0% { transform: translateY(0) scale(1); opacity: 0; }
+    10% { opacity: 1; }
+    100% { transform: translateY(-110vh) scale(1.5); opacity: 0; }
+  }
+
+  @keyframes pop {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  /* Confetti */
+  .confetti {
+    position: fixed;
+    top: -10px;
+    width: 10px;
+    height: 10px;
+    animation: fall 3s linear forwards;
+    pointer-events: none;
+  }
+
+  @keyframes fall {
+    to {
+      transform: translateY(110vh) rotate(720deg);
+      opacity: 0;
+    }
+  }
+</style>
+</head>
+<body>
+
+<h1>Anindita, will you be my Valentine? 💘</h1>
+<p>Be honest... but also choose wisely 😜</p>
+
+<button id="yesBtn">YES 💖</button>
+<button id="noBtn">NO 😅</button>
+
+<script>
+  const noBtn = document.getElementById("noBtn");
+  const yesBtn = document.getElementById("yesBtn");
+
+  let x = window.innerWidth * 0.6;
+  let y = window.innerHeight * 0.3;
+  let vx = 2;
+  let vy = 2;
+
+  function moveNoButton() {
+    x += vx;
+    y += vy;
+
+    const btnWidth = noBtn.offsetWidth;
+    const btnHeight = noBtn.offsetHeight;
+
+    if (x <= 0 || x + btnWidth >= window.innerWidth) vx *= -1;
+    if (y <= 0 || y + btnHeight >= window.innerHeight) vy *= -1;
+
+    noBtn.style.left = x + "px";
+    noBtn.style.top = y + "px";
+
+    requestAnimationFrame(moveNoButton);
+  }
+
+  moveNoButton();
+
+  // Speed up when mouse is near
+  document.addEventListener("mousemove", (e) => {
+    const rect = noBtn.getBoundingClientRect();
+    const dx = e.clientX - (rect.left + rect.width / 2);
+    const dy = e.clientY - (rect.top + rect.height / 2);
+    const dist = Math.sqrt(dx * dx + dy * dy);
+
+    if (dist < 150) {
+      vx += dx > 0 ? -0.5 : 0.5;
+      vy += dy > 0 ? -0.5 : 0.5;
+    }
+  });
+
+  // Hearts
+  function createHeart() {
+    const heart = document.createElement("div");
+    heart.classList.add("heart");
+    heart.innerText = "💖";
+    heart.style.left = Math.random() * 100 + "vw";
+    heart.style.animationDuration = (4 + Math.random() * 3) + "s";
+    heart.style.fontSize = (16 + Math.random() * 24) + "px";
+    document.body.appendChild(heart);
+    setTimeout(() => heart.remove(), 7000);
+  }
+  setInterval(createHeart, 400);
+
+  // Confetti
+  function launchConfetti() {
+    for (let i = 0; i < 150; i++) {
+      const confetti = document.createElement("div");
+      confetti.classList.add("confetti");
+      confetti.style.left = Math.random() * 100 + "vw";
+      confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+      confetti.style.animationDuration = (2 + Math.random() * 3) + "s";
+      confetti.style.width = (6 + Math.random() * 6) + "px";
+      confetti.style.height = (6 + Math.random() * 6) + "px";
+      document.body.appendChild(confetti);
+      setTimeout(() => confetti.remove(), 5000);
+    }
+  }
+
+  // YES click
+  yesBtn.addEventListener("click", () => {
+    launchConfetti();
+    document.body.innerHTML = `
+      <h1>YAY!!! 💞🎉</h1>
+      <p>Anindita, you just made me the happiest person ever 🥰</p>
+      <p>Happy Valentine’s Day ❤️</p>
+    `;
+    launchConfetti();
+  });
+</script>
+
+</body>
+</html>
