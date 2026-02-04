@@ -31,36 +31,34 @@
     margin-bottom: 20px;
   }
 
-  #yesBtn {
-    font-size: 1.4rem;
-    padding: 14px 32px;
+  .buttons {
+    position: relative;
+    height: 80px;
+  }
+
+  button {
+    font-size: 1.3rem;
+    padding: 12px 28px;
     border: none;
     border-radius: 12px;
-    background: #ff4d6d;
-    color: white;
     cursor: pointer;
     transition: transform 0.2s ease;
+  }
+
+  #yesBtn {
+    background: #ff4d6d;
+    color: white;
+    margin-right: 20px;
     z-index: 10;
   }
 
-  #yesBtn:hover {
-    transform: scale(1.08);
-  }
-
   #noBtn {
-    font-size: 1.2rem;
-    padding: 12px 26px;
-    border: none;
-    border-radius: 12px;
     background: #b3003b;
     color: white;
-    position: fixed;
-    top: 20%;
-    left: 60%;
-    pointer-events: none; /* Makes it unclickable */
+    position: relative; /* normal at first */
   }
 
-  /* Floating hearts */
+  /* Hearts */
   .heart {
     position: fixed;
     bottom: -20px;
@@ -102,48 +100,58 @@
 <body>
 
 <h1>Anindita, will you be my Valentine? 💘</h1>
-<p>Be honest... but also choose wisely 😜</p>
+<p>Choose wisely 😜</p>
 
-<button id="yesBtn">YES 💖</button>
-<button id="noBtn">NO 😅</button>
+<div class="buttons">
+  <button id="yesBtn">YES 💖</button>
+  <button id="noBtn">NO 😅</button>
+</div>
 
 <script>
   const noBtn = document.getElementById("noBtn");
   const yesBtn = document.getElementById("yesBtn");
 
-  let x = window.innerWidth * 0.6;
-  let y = window.innerHeight * 0.3;
-  let vx = 2;
-  let vy = 2;
+  let escapeMode = false;
+  let x = 0, y = 0;
+  let vx = 1.2, vy = 1.2; // slow speed
 
-  function moveNoButton() {
+  function startEscape() {
+    if (escapeMode) return;
+    escapeMode = true;
+
+    const rect = noBtn.getBoundingClientRect();
+    x = rect.left;
+    y = rect.top;
+
+    noBtn.style.position = "fixed";
+
+    moveNo();
+  }
+
+  function moveNo() {
+    if (!escapeMode) return;
+
     x += vx;
     y += vy;
 
-    const btnWidth = noBtn.offsetWidth;
-    const btnHeight = noBtn.offsetHeight;
+    const w = noBtn.offsetWidth;
+    const h = noBtn.offsetHeight;
 
-    if (x <= 0 || x + btnWidth >= window.innerWidth) vx *= -1;
-    if (y <= 0 || y + btnHeight >= window.innerHeight) vy *= -1;
+    if (x <= 0 || x + w >= window.innerWidth) vx *= -1;
+    if (y <= 0 || y + h >= window.innerHeight) vy *= -1;
 
     noBtn.style.left = x + "px";
     noBtn.style.top = y + "px";
 
-    requestAnimationFrame(moveNoButton);
+    requestAnimationFrame(moveNo);
   }
 
-  moveNoButton();
-
-  // Speed up when mouse is near
-  document.addEventListener("mousemove", (e) => {
-    const rect = noBtn.getBoundingClientRect();
-    const dx = e.clientX - (rect.left + rect.width / 2);
-    const dy = e.clientY - (rect.top + rect.height / 2);
-    const dist = Math.sqrt(dx * dx + dy * dy);
-
-    if (dist < 150) {
-      vx += dx > 0 ? -0.5 : 0.5;
-      vy += dy > 0 ? -0.5 : 0.5;
+  // Trigger escape when she tries to hover / click NO
+  noBtn.addEventListener("mouseenter", startEscape);
+  noBtn.addEventListener("mousedown", (e) => {
+    if (!escapeMode) {
+      e.preventDefault();
+      startEscape();
     }
   });
 
